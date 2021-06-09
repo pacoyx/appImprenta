@@ -6,6 +6,8 @@ import cors from "cors";
 import IndexRoutes from './routes/index.router';
 
 import * as routerLogin from './routes/loginRoutes';
+import * as routerUsuario from './routes/usuarioRoutes';
+import * as routerArea from './routes/areaRoutes';
 
 export class App {
     app: Application;
@@ -32,6 +34,8 @@ export class App {
     private routes() {
         this.app.use(IndexRoutes);
         this.app.use('/login', routerLogin.default);
+        this.app.use('/usuario', routerUsuario.default);
+        this.app.use('/area', routerArea.default);
     }
 
     async listen(): Promise<void> {

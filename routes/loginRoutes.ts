@@ -1,5 +1,4 @@
 import { Router, Request, Response } from "express";
-import {createUsuario} from '../controllers/loginController';
 
 const router = Router();
 
@@ -14,7 +13,7 @@ router.post('/auth', (req: Request, res: Response) => {
 });
 
 
-router.route('/newUser').post(createUsuario);
+
 
 
 

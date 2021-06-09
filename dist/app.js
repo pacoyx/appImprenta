@@ -38,6 +38,8 @@ const cors_1 = __importDefault(require("cors"));
 // Routes
 const index_router_1 = __importDefault(require("./routes/index.router"));
 const routerLogin = __importStar(require("./routes/loginRoutes"));
+const routerUsuario = __importStar(require("./routes/usuarioRoutes"));
+const routerArea = __importStar(require("./routes/areaRoutes"));
 class App {
     constructor(port) {
         this.port = port;
@@ -57,6 +59,8 @@ class App {
     routes() {
         this.app.use(index_router_1.default);
         this.app.use('/login', routerLogin.default);
+        this.app.use('/usuario', routerUsuario.default);
+        this.app.use('/area', routerArea.default);
     }
     listen() {
         return __awaiter(this, void 0, void 0, function* () {

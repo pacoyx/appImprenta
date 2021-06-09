@@ -1,5 +1,8 @@
 export interface Usuario {
-    login: string;
-    passwword: string;
-    descripcion: string;
+    email: string;
+    password: string;
+    nameUser: string;
+    profileUser: string;
+    area: string;
+    statusUser: string;
 }
