@@ -35,11 +35,16 @@ exports.App = void 0;
 const express_1 = __importDefault(require("express"));
 const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
+const express_fileupload_1 = __importDefault(require("express-fileupload"));
 // Routes
 const index_router_1 = __importDefault(require("./routes/index.router"));
 const routerLogin = __importStar(require("./routes/loginRoutes"));
 const routerUsuario = __importStar(require("./routes/usuarioRoutes"));
 const routerArea = __importStar(require("./routes/areaRoutes"));
+const routerCliente = __importStar(require("./routes/clienteRoutes"));
+const routerServicio = __importStar(require("./routes/servicioRoutes"));
+const routerVersion = __importStar(require("./routes/versionRoutes"));
+const routerProfile = __importStar(require("./routes/profileController"));
 class App {
     constructor(port) {
         this.port = port;
@@ -55,12 +60,17 @@ class App {
         this.app.use(cors_1.default({ origin: true, credentials: true }));
         this.app.use(morgan_1.default('dev'));
         this.app.use(express_1.default.json());
+        this.app.use(express_fileupload_1.default());
     }
     routes() {
         this.app.use(index_router_1.default);
         this.app.use('/login', routerLogin.default);
         this.app.use('/usuario', routerUsuario.default);
         this.app.use('/area', routerArea.default);
+        this.app.use('/cliente', routerCliente.default);
+        this.app.use('/servicio', routerServicio.default);
+        this.app.use('/version', routerVersion.default);
+        this.app.use('/profile', routerProfile.default);
     }
     listen() {
         return __awaiter(this, void 0, void 0, function* () {

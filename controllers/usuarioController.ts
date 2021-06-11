@@ -3,7 +3,6 @@ import { connect } from '../configdb/cnxMysql';
 import { Usuario } from '../interfaces/Usuario';
 
 
-
 export async function listUsuarios(req: Request, res: Response): Promise<Response | void> {
 
     try {
@@ -12,7 +11,7 @@ export async function listUsuarios(req: Request, res: Response): Promise<Respons
 
         res.json({
             estado: 'ok',
-            message: 'lista de usuarios',
+            message: 'exitoso',
             data: result[0]
         });
     } catch (error) {
@@ -26,15 +25,39 @@ export async function listUsuarios(req: Request, res: Response): Promise<Respons
 
 
 export async function createUsuario(req: Request, res: Response) {
+
+    let elbody = req.body;
+
+    if (elbody == null) {
+        return res.status(400).json({ estado: 'error', message: 'request invalido' });
+    }
+
+    if (elbody.email == null
+        || elbody.email === ''
+        || elbody.password == null
+        || elbody.password === ''
+        || elbody.nameUser == null
+        || elbody.nameUser === ''
+        || elbody.profileUser == null
+        || elbody.profileUser === ''
+        || elbody.area == null
+        || elbody.area === ''
+        || elbody.statusUser == null
+        || elbody.statusUser === '') {
+        return res.status(400).json({ estado: 'error', message: 'request invalido' });
+    }
+
+
     const newPost: Usuario = req.body;
     const conn = await connect();
     console.log([newPost]);
-    let parameters = [newPost.email, newPost.password, newPost.nameUser, newPost.profileUser, newPost.area, newPost.statusUser];
+    let parameters = [newPost.email, newPost.password, newPost.nameUser,
+    newPost.profileUser, newPost.area, newPost.statusUser];
     try {
         await conn.query('CALL SP_I_TB_USUARIO(?,?,?,?,?,?)', parameters);
         res.json({
             estado: 'ok',
-            message: 'New Usuario Created'
+            message: 'exito'
         });
     } catch (error) {
         res.json({
@@ -55,7 +78,7 @@ export async function updateUsuario(req: Request, res: Response) {
         await conn.query('CALL SP_U_TB_USUARIO(?,?,?,?,?,?)', parameters);
         res.json({
             estado: 'ok',
-            message: 'New Usuario Created'
+            message: 'exitoso'
         });
     } catch (error) {
         res.json({

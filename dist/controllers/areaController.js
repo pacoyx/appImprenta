@@ -34,6 +34,18 @@ function listAreas(req, res) {
 exports.listAreas = listAreas;
 function createArea(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
+        let elbody = req.body;
+        if (elbody == null) {
+            return res.status(400).json({ estado: 'error', message: 'request invalido' });
+        }
+        if (elbody.idarea == null
+            || elbody.idarea === ''
+            || elbody.descripcion == null
+            || elbody.descripcion === ''
+            || elbody.estado == null
+            || elbody.estado === '') {
+            return res.status(400).json({ estado: 'error', message: 'request invalido' });
+        }
         const newPost = req.body;
         const conn = yield cnxMysql_1.connect();
         console.log([newPost]);
@@ -57,6 +69,18 @@ function createArea(req, res) {
 exports.createArea = createArea;
 function updateArea(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
+        let elbody = req.body;
+        if (elbody == null) {
+            return res.status(400).json({ estado: 'error', message: 'request invalido' });
+        }
+        if (elbody.idarea == null
+            || elbody.idarea === ''
+            || elbody.descripcion == null
+            || elbody.descripcion === ''
+            || elbody.estado == null
+            || elbody.estado === '') {
+            return res.status(400).json({ estado: 'error', message: 'request invalido' });
+        }
         const newPost = req.body;
         const conn = yield cnxMysql_1.connect();
         console.log([newPost]);
@@ -80,6 +104,14 @@ function updateArea(req, res) {
 exports.updateArea = updateArea;
 function deleteArea(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
+        let elbody = req.body;
+        if (elbody == null) {
+            return res.status(400).json({ estado: 'error', message: 'request invalido' });
+        }
+        if (elbody.idarea == null
+            || elbody.idarea === '') {
+            return res.status(400).json({ estado: 'error', message: 'request invalido' });
+        }
         const newPost = req.body;
         const conn = yield cnxMysql_1.connect();
         console.log([newPost]);

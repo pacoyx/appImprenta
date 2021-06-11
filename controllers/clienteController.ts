@@ -1,18 +1,16 @@
 import { Request, Response } from 'express'
 import { connect } from '../configdb/cnxMysql';
-import { Area } from '../interfaces/Area';
+import { Cliente } from '../interfaces/Cliente';
 
-
-
-export async function listAreas(req: Request, res: Response): Promise<Response | void> {
+export async function listar(req: Request, res: Response): Promise<Response | void> {
 
     try {
         const conn = await connect();
-        const result = await conn.query('CALL SP_S_TB_AREA()');
+        const result = await conn.query('CALL SP_S_TB_CLIENTE()');
 
         res.json({
             estado: 'ok',
-            message: 'lista de areas',
+            message: 'successful',
             data: result[0]
         });
     } catch (error) {
@@ -24,8 +22,7 @@ export async function listAreas(req: Request, res: Response): Promise<Response |
     }
 }
 
-
-export async function createArea(req: Request, res: Response) {
+export async function registrar(req: Request, res: Response) {
 
     let elbody = req.body;
 
@@ -33,25 +30,32 @@ export async function createArea(req: Request, res: Response) {
         return res.status(400).json({ estado: 'error', message: 'request invalido' });
     }
 
-    if (elbody.idarea == null
-        || elbody.idarea === ''
+    if (elbody.idcliente == null
+        || elbody.idcliente === ''
         || elbody.descripcion == null
         || elbody.descripcion === ''
+        || elbody.correo == null
+        || elbody.correo === ''
+        || elbody.contacto == null
+        || elbody.contacto === ''
+        || elbody.movil == null
+        || elbody.movil === ''
         || elbody.estado == null
         || elbody.estado === '') {
         return res.status(400).json({ estado: 'error', message: 'request invalido' });
     }
 
 
-    const newPost: Area = req.body;
+    const newPost: Cliente = req.body;
     const conn = await connect();
     console.log([newPost]);
-    let parameters = [newPost.idarea, newPost.descripcion, newPost.estado];
+    let parameters = [newPost.idcliente, newPost.descripcion,
+    newPost.correo, newPost.contacto, newPost.movil, newPost.estado];
     try {
-        await conn.query('CALL SP_I_TB_AREA(?,?,?)', parameters);
+        await conn.query('CALL SP_I_TB_CLIENTE(?,?,?,?,?,?)', parameters);
         res.json({
             estado: 'ok',
-            message: 'Area Creada'
+            message: 'successful'
         });
     } catch (error) {
         res.json({
@@ -62,7 +66,7 @@ export async function createArea(req: Request, res: Response) {
     }
 }
 
-export async function updateArea(req: Request, res: Response) {
+export async function actualizar(req: Request, res: Response) {
 
     let elbody = req.body;
 
@@ -70,25 +74,30 @@ export async function updateArea(req: Request, res: Response) {
         return res.status(400).json({ estado: 'error', message: 'request invalido' });
     }
 
-    if (elbody.idarea == null
-        || elbody.idarea === ''
+    if (elbody.idcliente == null
+        || elbody.idcliente === ''
         || elbody.descripcion == null
         || elbody.descripcion === ''
+        || elbody.correo == null
+        || elbody.correo === ''
+        || elbody.contacto == null
+        || elbody.contacto === ''
+        || elbody.movil == null
+        || elbody.movil === ''
         || elbody.estado == null
         || elbody.estado === '') {
         return res.status(400).json({ estado: 'error', message: 'request invalido' });
     }
 
-
-    const newPost: Area = req.body;
+    const newPost: Cliente = req.body;
     const conn = await connect();
     console.log([newPost]);
-    let parameters = [newPost.idarea, newPost.descripcion, newPost.estado];
+    let parameters = [newPost.idcliente, newPost.descripcion, newPost.correo, newPost.contacto, newPost.movil, newPost.estado];
     try {
-        await conn.query('CALL SP_U_TB_AREA(?,?,?)', parameters);
+        await conn.query('CALL SP_U_TB_CLIENTE(?,?,?,?,?,?)', parameters);
         res.json({
             estado: 'ok',
-            message: 'Area Actualizada'
+            message: 'successful'
         });
     } catch (error) {
         res.json({
@@ -99,7 +108,9 @@ export async function updateArea(req: Request, res: Response) {
     }
 }
 
-export async function deleteArea(req: Request, res: Response) {
+
+
+export async function eliminar(req: Request, res: Response) {
 
     let elbody = req.body;
 
@@ -107,20 +118,19 @@ export async function deleteArea(req: Request, res: Response) {
         return res.status(400).json({ estado: 'error', message: 'request invalido' });
     }
 
-    if (elbody.idarea == null
-        || elbody.idarea === '') {
+    if (elbody.idcliente == null
+        || elbody.idcliente === '') {
         return res.status(400).json({ estado: 'error', message: 'request invalido' });
     }
-
-    const newPost: Area = req.body;
+    const newPost: Cliente = req.body;
     const conn = await connect();
     console.log([newPost]);
-    let parameters = [newPost.idarea];
+    let parameters = [newPost.idcliente];
     try {
-        await conn.query('CALL SP_D_TB_AREA(?)', parameters);
+        await conn.query('CALL SP_D_TB_CLIENTE(?)', parameters);
         res.json({
             estado: 'ok',
-            message: 'Area eliminada'
+            message: 'successful'
         });
     } catch (error) {
         res.json({

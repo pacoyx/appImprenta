@@ -18,7 +18,7 @@ function listUsuarios(req, res) {
             const result = yield conn.query('CALL SP_S_TB_USUARIO()');
             res.json({
                 estado: 'ok',
-                message: 'lista de usuarios',
+                message: 'exitoso',
                 data: result[0]
             });
         }
@@ -34,15 +34,34 @@ function listUsuarios(req, res) {
 exports.listUsuarios = listUsuarios;
 function createUsuario(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
+        let elbody = req.body;
+        if (elbody == null) {
+            return res.status(400).json({ estado: 'error', message: 'request invalido' });
+        }
+        if (elbody.email == null
+            || elbody.email === ''
+            || elbody.password == null
+            || elbody.password === ''
+            || elbody.nameUser == null
+            || elbody.nameUser === ''
+            || elbody.profileUser == null
+            || elbody.profileUser === ''
+            || elbody.area == null
+            || elbody.area === ''
+            || elbody.statusUser == null
+            || elbody.statusUser === '') {
+            return res.status(400).json({ estado: 'error', message: 'request invalido' });
+        }
         const newPost = req.body;
         const conn = yield cnxMysql_1.connect();
         console.log([newPost]);
-        let parameters = [newPost.email, newPost.password, newPost.nameUser, newPost.profileUser, newPost.area, newPost.statusUser];
+        let parameters = [newPost.email, newPost.password, newPost.nameUser,
+            newPost.profileUser, newPost.area, newPost.statusUser];
         try {
             yield conn.query('CALL SP_I_TB_USUARIO(?,?,?,?,?,?)', parameters);
             res.json({
                 estado: 'ok',
-                message: 'New Usuario Created'
+                message: 'exito'
             });
         }
         catch (error) {
@@ -65,7 +84,7 @@ function updateUsuario(req, res) {
             yield conn.query('CALL SP_U_TB_USUARIO(?,?,?,?,?,?)', parameters);
             res.json({
                 estado: 'ok',
-                message: 'New Usuario Created'
+                message: 'exitoso'
             });
         }
         catch (error) {
