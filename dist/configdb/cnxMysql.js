@@ -32,16 +32,20 @@ exports.connect = void 0;
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
 const promise_1 = require("mysql2/promise");
+let globalPool = undefined;
 function connect() {
     return __awaiter(this, void 0, void 0, function* () {
-        const connection = yield promise_1.createPool({
+        if (globalPool) {
+            return globalPool;
+        }
+        globalPool = yield promise_1.createPool({
             host: process.env.DB_HOST,
             user: process.env.DB_USER,
             password: process.env.DB_PWD,
             database: process.env.DB_NAME,
             connectionLimit: 10
         });
-        return connection;
+        return globalPool;
     });
 }
 exports.connect = connect;

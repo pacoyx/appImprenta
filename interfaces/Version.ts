@@ -8,4 +8,7 @@ export interface Version {
     fecha: string;
     usuario: string;
     comentario: string;
+    servicio_Item: number;
+    nombreArchivoOriginal: string;
+    mimetype: string;
 }

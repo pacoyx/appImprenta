@@ -23,14 +23,15 @@ export async function login(req: Request, res: Response): Promise<Response | voi
 
     try {
         const conn = await connect();
-        const result: any = await conn.query('CALL SP_S_LOGIN(?,?)', parameters);
-        console.log('result[0]', result[0][0]);
+        let [rows, fields] = await conn.query('CALL SP_S_LOGIN(?,?)', parameters);
+        let result : any= rows;
 
-        if (Object.keys(result[0][0]).length > 0) {
+        // if (Object.keys(result[0][0]).length > 0) {
+        if (Object.keys(result[0]).length > 0) {
             res.json({
                 estado: 'ok',
                 message: 'login successful',
-                data: result[0]
+                data: rows
             });
         } else {
             res.json({

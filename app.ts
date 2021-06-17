@@ -20,9 +20,11 @@ export class App {
     constructor(
         private port?: number | string
     ) {
+        
+        
         this.app = express();
-        this.settings();
         this.middlewares();
+        this.settings();
         this.routes();
     }
 
@@ -31,7 +33,7 @@ export class App {
     }
 
     private middlewares() {
-        this.app.use(cors({ origin: true, credentials: true }));
+        this.app.use(cors());
         this.app.use(morgan('dev'));
         this.app.use(express.json());
         this.app.use(fileUpload());
@@ -39,13 +41,13 @@ export class App {
 
     private routes() {
         this.app.use(IndexRoutes);
-        this.app.use('/login', routerLogin.default);
-        this.app.use('/usuario', routerUsuario.default);
-        this.app.use('/area', routerArea.default);
-        this.app.use('/cliente', routerCliente.default);
-        this.app.use('/servicio', routerServicio.default);
-        this.app.use('/version', routerVersion.default);
-        this.app.use('/profile', routerProfile.default);
+        this.app.use('/api/login', routerLogin.default);
+        this.app.use('/api/usuario', routerUsuario.default);
+        this.app.use('/api/area', routerArea.default);
+        this.app.use('/api/cliente', routerCliente.default);
+        this.app.use('/api/servicio', routerServicio.default);
+        this.app.use('/api/version', routerVersion.default);
+        this.app.use('/api/profile', routerProfile.default);
         
 
     }

@@ -1,11 +1,36 @@
 import { Request, Response } from 'express'
 import { connect } from '../configdb/cnxMysql';
-import { Servicio } from '../interfaces/Servicio';
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path'
 import moment from 'moment';
 import { Version } from '../interfaces/Version';
 
+const baseUrl = "http://localhost:8080/files/";
+
+export async function downloadFile(req: Request, res: Response) {
+    const fileName = req.body.fileName;
+    const directoryPath = path.join(__dirname + '../../') + 'public/images/';
+
+
+    res.download(directoryPath + fileName, fileName, (err) => {
+        if (err) {
+            res.status(500).send({
+                message: "Could not download the file. " + err,
+            });
+        }
+    });
+}
+
+export async function downloadFile2(req: Request, res: Response) {
+
+    const fileName = req.body.fileName;
+
+    const directoryPathtest = path.join(__dirname + '../../') + 'public/images/';
+    console.log(directoryPathtest + fileName);
+
+    res.sendFile(directoryPathtest + fileName);
+
+}
 
 export async function uploadFile(req: Request, res: Response) {
 
@@ -13,13 +38,17 @@ export async function uploadFile(req: Request, res: Response) {
     console.log(req.body);
     console.log(moment().format());
 
+    
     let pUsuario = req.body.usuario;
     let pIdServicio = req.body.idservicio;
     let pNombreArchivo = '';
+    let pNombreArchivoOriginal = '';
     let pFileSrc = '';
     let pTipo = req.body.tipo;
     let pFecha = moment().format();
     let pComentario = req.body.comentario;
+    let pServicioItem = req.body.servicioItem;
+    let pMimeType = '';
 
     let controlFile: any;
     let uploadPath;
@@ -30,17 +59,20 @@ export async function uploadFile(req: Request, res: Response) {
 
     controlFile = req.files.uploadFile;
     var fileName = controlFile.name;
-    var uuidname = uuidv4() + '_';
+    // var uuidname = new Date().getTime() + '_';
+    const newFileName = new Date().getTime() + '_' + fileName;
+    pMimeType = controlFile.mimetype;
+    // if (controlFile.mimetype === 'image/jpeg' || controlFile.mimetype === 'image/png' || controlFile.mimetype === 'image/jpg') {
+    //     uploadPath = path.join(__dirname + '../../') + 'public/images/' + newFileName;
+    // } else {
+    //     uploadPath = path.join(__dirname + '../../') + 'public/docs/' + newFileName;
+    // }
 
-
-    if (controlFile.mimetype === 'image/jpeg' || controlFile.mimetype === 'image/png' || controlFile.mimetype === 'image/jpg') {
-        uploadPath = path.join(__dirname + '../../') + 'public/images/' + uuidname + fileName;
-    } else {
-        uploadPath = path.join(__dirname + '../../') + 'public/docs/' + uuidname + fileName;
-    }
+    uploadPath = path.join(__dirname + '../../') + 'public/images/' + newFileName;
 
     pFileSrc = uploadPath;
-    pNombreArchivo = fileName;
+    pNombreArchivoOriginal = fileName;
+    pNombreArchivo = newFileName;
 
     controlFile.mv(uploadPath, async function (err: any) {
 
@@ -57,6 +89,9 @@ export async function uploadFile(req: Request, res: Response) {
             comentario: pComentario,
             idversion: 0,
             item: 0,
+            servicio_Item: pServicioItem,
+            nombreArchivoOriginal: pNombreArchivoOriginal,
+            mimetype: pMimeType
         }
 
         let resp = await registrarVersion(version);
@@ -74,10 +109,10 @@ export async function uploadFile(req: Request, res: Response) {
 export async function listarxServicio(req: Request, res: Response): Promise<Response | void> {
 
     const newPost: Version = req.body;
-    let parameters = [newPost.idservicio];
+    let parameters = [newPost.idservicio, newPost.item];
     try {
         const conn = await connect();
-        const result = await conn.query('CALL SP_S_TB_VERSION_SERVICIO(?)', parameters);
+        const result = await conn.query('CALL SP_S_TB_VERSION_SERVICIO(?,?)', parameters);
 
         res.json({
             estado: 'ok',
@@ -117,9 +152,10 @@ export async function listarTodos(req: Request, res: Response): Promise<Response
 async function registrarVersion(newPost: Version) {
     const conn = await connect();
     let parameters = [newPost.idservicio, newPost.nombreArchivo, newPost.file_src,
-    newPost.tipo, newPost.fecha, newPost.usuario, newPost.comentario];
+    newPost.tipo, newPost.fecha, newPost.usuario, newPost.comentario, newPost.servicio_Item,
+    newPost.nombreArchivoOriginal, newPost.mimetype];
     try {
-        await conn.query('CALL SP_I_TB_VERSION(?,?,?,?,?,?,?)', parameters);
+        await conn.query('CALL SP_I_TB_VERSION(?,?,?,?,?,?,?,?,?,?)', parameters);
         return ({
             estado: 'ok',
             message: 'successful'

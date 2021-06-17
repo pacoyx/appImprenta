@@ -27,13 +27,14 @@ function login(req, res) {
         let parameters = [newPost.email, newPost.password];
         try {
             const conn = yield cnxMysql_1.connect();
-            const result = yield conn.query('CALL SP_S_LOGIN(?,?)', parameters);
-            console.log('result[0]', result[0][0]);
-            if (Object.keys(result[0][0]).length > 0) {
+            let [rows, fields] = yield conn.query('CALL SP_S_LOGIN(?,?)', parameters);
+            let result = rows;
+            // if (Object.keys(result[0][0]).length > 0) {
+            if (Object.keys(result[0]).length > 0) {
                 res.json({
                     estado: 'ok',
                     message: 'login successful',
-                    data: result[0]
+                    data: rows
                 });
             }
             else {

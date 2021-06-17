@@ -49,28 +49,28 @@ class App {
     constructor(port) {
         this.port = port;
         this.app = express_1.default();
-        this.settings();
         this.middlewares();
+        this.settings();
         this.routes();
     }
     settings() {
         this.app.set('port', this.port || process.env.PORT || 3000);
     }
     middlewares() {
-        this.app.use(cors_1.default({ origin: true, credentials: true }));
+        this.app.use(cors_1.default());
         this.app.use(morgan_1.default('dev'));
         this.app.use(express_1.default.json());
         this.app.use(express_fileupload_1.default());
     }
     routes() {
         this.app.use(index_router_1.default);
-        this.app.use('/login', routerLogin.default);
-        this.app.use('/usuario', routerUsuario.default);
-        this.app.use('/area', routerArea.default);
-        this.app.use('/cliente', routerCliente.default);
-        this.app.use('/servicio', routerServicio.default);
-        this.app.use('/version', routerVersion.default);
-        this.app.use('/profile', routerProfile.default);
+        this.app.use('/api/login', routerLogin.default);
+        this.app.use('/api/usuario', routerUsuario.default);
+        this.app.use('/api/area', routerArea.default);
+        this.app.use('/api/cliente', routerCliente.default);
+        this.app.use('/api/servicio', routerServicio.default);
+        this.app.use('/api/version', routerVersion.default);
+        this.app.use('/api/profile', routerProfile.default);
     }
     listen() {
         return __awaiter(this, void 0, void 0, function* () {
