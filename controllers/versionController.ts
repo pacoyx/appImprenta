@@ -1,16 +1,12 @@
 import { Request, Response } from 'express'
 import { connect } from '../configdb/cnxMysql';
-import { v4 as uuidv4 } from 'uuid';
 import path from 'path'
 import moment from 'moment';
 import { Version } from '../interfaces/Version';
 
-const baseUrl = "http://localhost:8080/files/";
-
 export async function downloadFile(req: Request, res: Response) {
     const fileName = req.body.fileName;
     const directoryPath = path.join(__dirname + '../../') + 'public/images/';
-
 
     res.download(directoryPath + fileName, fileName, (err) => {
         if (err) {
@@ -32,13 +28,41 @@ export async function downloadFile2(req: Request, res: Response) {
 
 }
 
-export async function uploadFile(req: Request, res: Response) {
+export async function registerVersionWithOutFile(req: Request, res: Response) {
+
+    let param = req.body;
+
+    let version: Version = {
+        idservicio: param.idservicio,
+        nombreArchivo: '',
+        file_src: '',
+        tipo: param.tipo,
+        fecha: moment().format(),
+        usuario: param.usuario,
+        comentario: param.comentario,
+        idversion: 0,
+        item: 0,
+        servicio_Item: param.servicioItem,
+        nombreArchivoOriginal: '',
+        mimetype: ''
+    }
+
+    let resp = await registrarVersion(version);
+    if (resp.estado === 'ok') {
+        res.json(resp);
+    } else {
+        console.log('ocurrio un error al grabar version en bd', resp.error);
+        res.json(resp);
+    }
+
+}
+export async function registerVersionWithFile(req: Request, res: Response) {
 
     console.log(req.files);
     console.log(req.body);
     console.log(moment().format());
 
-    
+
     let pUsuario = req.body.usuario;
     let pIdServicio = req.body.idservicio;
     let pNombreArchivo = '';
@@ -53,20 +77,18 @@ export async function uploadFile(req: Request, res: Response) {
     let controlFile: any;
     let uploadPath;
 
+
+
     if (!req.files || Object.keys(req.files).length === 0) {
         return res.status(400).send('No se cargaron archivos.');
     }
 
+
+
     controlFile = req.files.uploadFile;
     var fileName = controlFile.name;
-    // var uuidname = new Date().getTime() + '_';
     const newFileName = new Date().getTime() + '_' + fileName;
     pMimeType = controlFile.mimetype;
-    // if (controlFile.mimetype === 'image/jpeg' || controlFile.mimetype === 'image/png' || controlFile.mimetype === 'image/jpg') {
-    //     uploadPath = path.join(__dirname + '../../') + 'public/images/' + newFileName;
-    // } else {
-    //     uploadPath = path.join(__dirname + '../../') + 'public/docs/' + newFileName;
-    // }
 
     uploadPath = path.join(__dirname + '../../') + 'public/images/' + newFileName;
 
@@ -108,11 +130,11 @@ export async function uploadFile(req: Request, res: Response) {
 
 export async function listarxServicio(req: Request, res: Response): Promise<Response | void> {
 
-    const newPost: Version = req.body;
-    let parameters = [newPost.idservicio, newPost.item];
+    const newPost: any = req.body;
+    let parameters = [newPost.idservicio, newPost.item, newPost.profile];
     try {
         const conn = await connect();
-        const result = await conn.query('CALL SP_S_TB_VERSION_SERVICIO(?,?)', parameters);
+        const result = await conn.query('CALL SP_S_TB_VERSION_SERVICIO(?,?,?)', parameters);
 
         res.json({
             estado: 'ok',

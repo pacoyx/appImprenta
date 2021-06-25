@@ -5,8 +5,12 @@ import { Servicio } from '../interfaces/Servicio';
 export async function listar(req: Request, res: Response): Promise<Response | void> {
 
     try {
+
+        let elbody = req.body;
+
+        let parameters = [elbody.tipo, elbody.filtro];
         const conn = await connect();
-        const result = await conn.query('CALL SP_S_TB_SERVICIO()');
+        const result = await conn.query('CALL SP_S_TB_SERVICIO(?,?)', parameters);
 
         res.json({
             estado: 'ok',
@@ -53,6 +57,8 @@ export async function registrar(req: Request, res: Response) {
         return res.status(400).json({ estado: 'error', message: 'request invalido' });
     }
 
+    console.log('llego aki');
+    console.log(req.body);
 
     const newPost: Servicio = req.body;
     const conn = await connect();
